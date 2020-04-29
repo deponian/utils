@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+#
+# list kvm instances along with their network interfaces
+#
+
+virsh -c qemu+ssh://rufus@temeria/system list --all | \
+	grep running | \
+	awk ' { print $2 } ' | \
+	while read -r i; do echo "$i :: $(virsh -c qemu+ssh://rufus@temeria/system dumpxml "$i" | grep vnet | xargs echo)"; done 2>/dev/null

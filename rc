@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+#
+# rc -- remove colors -- use as pipe member to remove colors from output of previous command
+#
+
+sed 's/\x1b\[[0-9;]*m//g'

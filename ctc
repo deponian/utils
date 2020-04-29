@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+#
+# -- ctc -- copy files to clipboard
+# Script makes tar-archive, converts to base64 and sends to clipboard,
+# if file or directory names are passed as arguments and vice versa if no arguments are passed.
+
+files=("$@")
+
+# If no args then copy from clipboard
+if [[ "${#files[@]}" == 0 ]]
+then
+	xclip -o | base64 -d | tar -xzvf -
+	exit
+fi
+
+# Check if files exist
+for file in "${files[@]}"
+do
+	if [[ ! -f "$file" ]] && [[ ! -d "$file" ]]
+	then
+		echo "File or directory $file doesn't exist."
+		exit
+	fi
+done
+
+tar -czf - "${files[@]}" | base64 | xclip
+
+echo "Files are copied to clipboard."
+

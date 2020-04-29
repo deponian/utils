@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+#
+# send command to all kvm instances
+#
+
+virsh='virsh -c qemu+ssh://rufus@temeria/system'
+
+ANSWER=''
+read -r -p "Say y or n: " ANSWER
+
+if [[ "$ANSWER" != "y" ]]; then
+	echo "VMs saved"
+	exit
+fi
+
+read -r -p "Now say yes or no: " ANSWER
+
+if [[ "$ANSWER" != "yes" ]]; then
+	echo "VMs saved"
+	exit
+fi
+
+case $1 in
+	shutdown_all)
+		for vm in $("$virsh" list --name); do "$virsh" shutdown "$vm"; done
+		;;
+	restart_all)
+		for vm in $("$virsh" list --name); do "$virsh" restart "$vm"; done
+		;;
+	*)
+		echo "Incorrect command"
+		;;
+esac
